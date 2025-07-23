@@ -193,6 +193,8 @@ class Streamer implements Emitter, Listener
     private function processPayload(array $payload, array $handlers, Stream\MultiStream $streams): void
     {
         foreach ($payload as $message) {
+            // If the handler throws (e.g., due to config flag and a listener failure),
+            // the message will NOT be acknowledged and will remain pending for the group/consumer.
             try {
                 $this->forward($message, $this->getHandler($message['stream'], $handlers));
                 $streams->acknowledge([$message['stream'] => $message['id']]);
@@ -225,7 +227,6 @@ class Streamer implements Emitter, Listener
 
     private function report(string $id, Stream $on, Throwable $ex): void
     {
-        $error = "Listener error. Failed processing message with ID $id on '{$on->getName()}' stream. Error: {$ex->getMessage()}";
-        Log::error($error);
+        Log::error("Listener error. Failed processing message with ID $id on '{$on->getName()}' stream. Error: {$ex->getMessage()}");
     }
 }

@@ -98,7 +98,8 @@ class MultiStream
 
     public function await(string $lastSeenId = '', float $timeout = 0.0): ?array
     {
-        if ($lastSeenId === '' || $lastSeenId === '0') {
+        // Only replace with getNewEntriesKey() if lastSeenId is empty
+        if ($lastSeenId === '') {
             $lastSeenId = $this->getNewEntriesKey();
         }
 
@@ -176,7 +177,8 @@ class MultiStream
         }
 
         $consumer = new Consumer($this->consumer, $stream, $this->group);
-        if ($lastSeenId === '' || $lastSeenId === '0') {
+        // Only replace with getNewEntriesKey() if lastSeenId is empty
+        if ($lastSeenId === '') {
             $lastSeenId = $consumer->getNewEntriesKey();
         }
 
